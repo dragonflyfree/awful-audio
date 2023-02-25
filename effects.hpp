@@ -1,6 +1,8 @@
 #include <vector>
 #include <SFML/Audio.hpp>
 
+// I forget if any of this works I just had to edit it to make it look, not horrible idk don't use it
+
 class Delay {
 public:
 	Delay(float maxDelayTime, float delay, float gain) :
@@ -126,8 +128,7 @@ void applyReverb(sf::SoundBuffer& sound, float wetness) {
 
 	std::vector<sf::Int16> output;
 
-	// Leave this section uncommented and the others commented to get REVERB effect
-	/*CombFilter combs[]{
+	CombFilter combs[]{
 		{1, .03604, .805},
 		{1, .03112, .827},
 		{1, .04044, .783},
@@ -160,10 +161,18 @@ void applyReverb(sf::SoundBuffer& sound, float wetness) {
 		}
 
 		output.emplace_back(sample * (1 - wetness) + effectedSample * wetness);
-	}*/
+	}
 
-	// Leave this section uncommented and the others commented to get DELAY effect
-	/*Delay delay(2, 0.2, 0.5);
+	sound.loadFromSamples(output.data(), output.size(), 1, 44100);
+}
+
+void applyDelay(sf::SoundBuffer& sound, float wetness) {
+	const sf::Int16* samples = sound.getSamples();
+	std::size_t sampleCount = sound.getSampleCount();
+
+	std::vector<sf::Int16> output;
+
+	Delay delay(2, 0.2, 0.5);
 	for (int i = 0; i < sampleCount; i++) {
 		auto sample = samples[i];
 
@@ -174,9 +183,17 @@ void applyReverb(sf::SoundBuffer& sound, float wetness) {
 		delay.step();
 
 		output.emplace_back(sample);
-	}*/
+	}
 
-	// Leave this section uncommented and the others commented to get BITCRUSH effect
+	sound.loadFromSamples(output.data(), output.size(), 1, 44100);
+}
+
+void applyBitcrush(sf::SoundBuffer& sound, float wetness) {
+	const sf::Int16* samples = sound.getSamples();
+	std::size_t sampleCount = sound.getSampleCount();
+
+	std::vector<sf::Int16> output;
+
 	int n = 4;
 	for (int i = 0; i < sampleCount; i++) {
 		auto sample = samples[i];
